@@ -12,13 +12,11 @@ const App = () => {
   const [task, setTask] = useState("");
   const [search, setSearch] = useState("");
   const [totalTaskNum, setTotalTaskNum] = useState(0);
-  const [activeTaskNum, setActiveTaskNum] = useState(0);
   const [alignment, setAlignment] = useState('Active');
   const [allValue, setAllValue] = useState(false);
   const [activeValue, setActiveValue] = useState(true);
   const [completeValue, setCompleteValue] = useState(false);
   const [activeValueMap, setActiveValueMap] = useState([]);
-  const [completeValueMap, setCompleteValueMap] = useState([]);
 
   const handleAlignment = (event, newAlignment) => {
     setAlignment(newAlignment);
@@ -26,16 +24,8 @@ const App = () => {
 
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem("tasks"));
-    const activeValueMap = JSON.parse(localStorage.getItem("activeValueMap"));
-    const completeValueMap = JSON.parse(localStorage.getItem("completeValueMap"));
     if (storedTasks) {
       setTasks(storedTasks)
-    }
-    if (activeValueMap) {
-      setActiveValueMap(activeValueMap)
-    }
-    if (completeValueMap) {
-      setCompleteValueMap(completeValueMap)
     }
   }, []);
 
@@ -49,9 +39,7 @@ const App = () => {
     e.preventDefault();
     if(task !== ''){
       setTasks([...tasks, task]);
-      setActiveValueMap([...tasks, task]);
       localStorage.setItem("tasks", JSON.stringify([...tasks, task]));
-      localStorage.setItem("activeValueMap", JSON.stringify([...tasks, task]));
     }
     setTask("");
   };
@@ -61,29 +49,27 @@ const App = () => {
     const newTasks = [...tasks];
     newTasks.splice(index, 1);
     setTasks(newTasks);
-    setActiveValueMap(newTasks);
     localStorage.setItem("tasks", JSON.stringify(newTasks));
-    localStorage.setItem("activeValueMap", JSON.stringify(newTasks));
   };
 
   // Method for checkbox are how many times checked
-  const checked = (e, index) => {
-    completeValueMap.push(e.target.value)
+  const checked = (e, tabName) => {
+    if(tabName === "ActiveTask"){
     const newTasks = [...activeValueMap];
-    newTasks.splice(index, 1);
     setActiveValueMap(newTasks);
     const getIndex = tasks.indexOf(e.target.value)
     const setTaskss = tasks[getIndex].split('-')
     const setValuesss = setTaskss[0] + "-" + true
     tasks.splice(getIndex, 1, setValuesss)
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-    localStorage.setItem("activeValueMap", JSON.stringify(newTasks));
-    localStorage.setItem("completeValueMap", JSON.stringify(completeValueMap));
-    if (e.target.checked) {
-      setActiveTaskNum(activeTaskNum + 1);
-    } else {
-      setActiveTaskNum(activeTaskNum - 1);
-    }
+    localStorage.setItem("tasks", JSON.stringify(tasks));}
+    else{
+      const newTasks = [...activeValueMap];
+      setActiveValueMap(newTasks);
+      const getIndex = tasks.indexOf(e.target.value)
+      const setTaskss = tasks[getIndex].split('-')
+      const setValuesss = setTaskss[0] + "-" + false
+      tasks.splice(getIndex, 1, setValuesss)
+      localStorage.setItem("tasks", JSON.stringify(tasks));}
   };
 
   // Method for searching
@@ -115,6 +101,8 @@ const App = () => {
     setAllValue(false)
     console.log('complitTasks');
   }
+  let active = tasks.filter((data)=>{return(data.split("-")[1] === 'false')})
+  let completed = tasks.filter((data)=>{return(data.split("-")[1] === 'true')})
 
   return (
     <div>
@@ -152,11 +140,11 @@ const App = () => {
             :
             (
               activeValue === true ?
-                <ActiveTask data={activeValueMap} checked={checked} deleteTask={deleteTask} />
+                <ActiveTask data={filteredTasks} checked={checked} deleteTask={deleteTask} />
                 :
                 (
                   completeValue === true ?
-                    <CompleteTask data={completeValueMap} checked={checked} deleteTask={deleteTask} /> : null)
+                    <CompleteTask data={filteredTasks} checked={checked} deleteTask={deleteTask} /> : null)
 
             )
 
@@ -169,7 +157,7 @@ const App = () => {
         >
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Typography style={{ marginLeft: '1rem', fontSize: '1rem' }}>
-              {(totalTaskNum - completeValueMap.length) > 0 ? (totalTaskNum - completeValueMap.length) : 0} Items left
+              {active.length} Items left
             </Typography>
           </div>
           <div>
@@ -180,8 +168,8 @@ const App = () => {
               aria-label="text alignment"
             >
               <ToggleButton value="All" style={{ border: '0' }} onClick={() => { allTasks() }} >All Tasks: {totalTaskNum}</ToggleButton>
-              <ToggleButton value="Active" style={{ border: '0' }} onClick={() => { activeTasks() }} >Active: {(totalTaskNum - completeValueMap.length) > 0 ? (totalTaskNum - completeValueMap.length) : 0}</ToggleButton>
-              <ToggleButton value="Completed" style={{ border: '0' }} onClick={() => { complitTasks() }} >Completed: {completeValueMap.length}</ToggleButton>
+              <ToggleButton value="Active" style={{ border: '0' }} onClick={() => { activeTasks() }} >Active: {active.length}</ToggleButton>
+              <ToggleButton value="Completed" style={{ border: '0' }} onClick={() => { complitTasks() }} >Completed: {completed.length}</ToggleButton>
             </ToggleButtonGroup>
           </div>
         </BottomNavigation>
