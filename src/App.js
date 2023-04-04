@@ -63,6 +63,7 @@ const App = () => {
     setTasks(newTasks);
     setActiveValueMap(newTasks);
     localStorage.setItem("tasks", JSON.stringify(newTasks));
+    localStorage.setItem("activeValueMap", JSON.stringify(newTasks));
   };
 
   // Method for checkbox are how many times checked
