@@ -1,4 +1,4 @@
-import { BottomNavigation, Button, Checkbox, Paper, Table, TableCell, TableRow, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { BottomNavigation, Paper, Table, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
@@ -136,14 +136,17 @@ const App = () => {
         </div>
         <Table style={{ width: '61.5%', margin: '0 auto 8rem auto' }}>
           {allValue === true ?
+            // All Tasks Display in web
             <AllTask data={filteredTasks} checked={checked} deleteTask={deleteTask} />
             :
             (
               activeValue === true ?
+                // Active Tasks Display in web
                 <ActiveTask data={filteredTasks} checked={checked} deleteTask={deleteTask} />
                 :
                 (
                   completeValue === true ?
+                    // Complete Tasks Display in web
                     <CompleteTask data={filteredTasks} checked={checked} deleteTask={deleteTask} /> : null)
 
             )
