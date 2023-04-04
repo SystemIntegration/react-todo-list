@@ -47,10 +47,12 @@ const App = () => {
   // Method for Add Task
   const addTask = (e) => {
     e.preventDefault();
-    setTasks([...tasks, task]);
-    setActiveValueMap([...tasks, task]);
-    localStorage.setItem("tasks", JSON.stringify([...tasks, task]));
-    localStorage.setItem("activeValueMap", JSON.stringify([...tasks, task]));
+    if(task !== ''){
+      setTasks([...tasks, task]);
+      setActiveValueMap([...tasks, task]);
+      localStorage.setItem("tasks", JSON.stringify([...tasks, task]));
+      localStorage.setItem("activeValueMap", JSON.stringify([...tasks, task]));
+    }
     setTask("");
   };
 
